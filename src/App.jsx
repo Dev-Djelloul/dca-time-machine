@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import logoLockup from "../assets/logo/dca-time-machine-lockup.svg";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -610,6 +611,28 @@ export default function DCATimeMachine() {
     });
   };
 
+  // Small watermark echoing the logo's geometry (rewind arc + frozen candlestick) — drawn directly on
+  // canvas so the exported images don't depend on loading an external image asynchronously.
+  function drawTimeMachineGlyph(ctx, cx, cy, r, color) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = r * 0.14;
+    ctx.lineCap = "square";
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0.35 * Math.PI, 1.9 * Math.PI);
+    ctx.stroke();
+    const cursorSize = r * 0.32;
+    ctx.fillRect(cx + r * 0.55, cy - r * 1.05, cursorSize, cursorSize);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.5);
+    ctx.lineTo(cx, cy + r * 0.5);
+    ctx.lineWidth = r * 0.09;
+    ctx.stroke();
+    ctx.fillRect(cx - r * 0.22, cy - r * 0.18, r * 0.44, r * 0.5);
+    ctx.restore();
+  }
+
   // Export the receipt as a real downloadable PNG, drawn on a canvas (no external lib needed).
   const exportReceiptImage = useCallback(() => {
     if (!roastLines.length) return;
@@ -677,6 +700,8 @@ export default function DCATimeMachine() {
       wrapped.forEach((wl, j) => ctx.fillText(wl, paddingX, y + j * 16));
     });
 
+    drawTimeMachineGlyph(ctx, width - paddingX - 6, height - 26, 9, "#5A6B4A");
+
     const dataUrl = canvas.toDataURL("image/png");
     const a = document.createElement("a");
     a.href = dataUrl;
@@ -707,9 +732,10 @@ export default function DCATimeMachine() {
     ctx.fillRect(0, 0, W, H);
 
     ctx.textAlign = "center";
+    drawTimeMachineGlyph(ctx, W / 2, 70, 22, "#39FF9C");
     ctx.fillStyle = "#5A6B7A";
     ctx.font = "600 20px 'IBM Plex Mono', monospace";
-    ctx.fillText("DCA TIME MACHINE", W / 2, 120);
+    ctx.fillText("DCA TIME MACHINE", W / 2, 130);
 
     const mult = compareMode
       ? Math.max(...compareAssets.map((k) => compareFinals[k].dcaValue / compareFinals[k].dcaInvested))
@@ -801,8 +827,7 @@ export default function DCATimeMachine() {
 
       <div style={{ maxWidth: 760, margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
-          <span style={{ color: "#39FF9C", fontSize: 13, letterSpacing: 2 }}>TERMINAL</span>
-          <span style={{ color: "#5A6B7A", fontSize: 12 }}>v4.0</span>
+          <span style={{ color: "#5A6B7A", fontSize: 12 }}>v6.0</span>
           {challengeMode && (
             <span style={{ fontSize: 11, color: "#FFB020" }}>
               SCORE DÉFI : {score.correct}/{score.total}
@@ -823,15 +848,8 @@ export default function DCATimeMachine() {
             {dataSource === "fallback" && "données locales (fallback)"}
           </span>
         </div>
-        <h1
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: 30,
-            margin: "0 0 6px",
-            letterSpacing: -0.5,
-          }}
-        >
-          DCA Time Machine
+        <h1 style={{ margin: "0 0 6px" }}>
+          <img src={logoLockup} alt="DCA Time Machine" style={{ height: 40, display: "block" }} />
         </h1>
         <p style={{ color: "#8FA0AF", fontSize: 13.5, margin: "0 0 20px", lineHeight: 1.5 }}>
           Remonte le temps, investis façon DCA, et découvre le verdict.
