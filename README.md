@@ -1,7 +1,9 @@
 # ⏳ DCA Time Machine
 
 > **Simulateur DCA vs Lump Sum crypto, avec verdict sarcastique partageable**
-> Un projet [Digital Blue Skye](https://github.com/) — remonte le temps, investis façon DCA (Dollar-Cost Averaging), et découvre si t'aurais dû tout miser d'un coup à la place.
+> Un projet [Digital Blue Skye](https://github.com/Dev-Djelloul) — remonte le temps, investis façon DCA (Dollar-Cost Averaging), et découvre si t'aurais dû tout miser d'un coup à la place.
+
+**🔗 Démo en ligne : [dca-timemachine.netlify.app](https://dca-timemachine.netlify.app/)**
 
 ---
 
@@ -18,6 +20,7 @@
 - **Rappel de versement** — bannière qui indique si aujourd'hui est ton jour de versement du mois, avec le prix crypto en direct et ce que ton montant t'achèterait maintenant.
 - **Scénarios "et si j'arrêtais aujourd'hui"** — projette ta position actuelle à ±30 %/+50 % à partir du prix live, pour explorer (pas prédire) différentes sorties.
 - **Export image** — télécharge le reçu en PNG, ou une version "story" verticale (9:16) prête pour Instagram/Snapchat.
+- **Identité visuelle propre** — logo dédié (favicon + header) et watermark discret sur les images exportées.
 - **Données live + fallback** — tente un appel à l'API publique CoinGecko pour des prix réels, et bascule automatiquement sur un jeu de données local si l'API est indisponible (rate limit, réseau, etc.).
 
 ⚠️ **Avertissement** : cet outil est ludique et pédagogique. Les données de prix (surtout avant 2020 et pour le S&P 500) sont approximatives/illustratives. Ce n'est en aucun cas un conseil en investissement.
@@ -28,7 +31,7 @@
 
 - **React 18** + **Vite** (build ultra-rapide, zéro config lourde)
 - **Recharts** pour les graphiques (courbes + barres de volatilité)
-- **Canvas API native** pour l'export d'images (pas de dépendance externe type html2canvas)
+- **Canvas API native** pour l'export d'images et le watermark (pas de dépendance externe type html2canvas)
 - **localStorage** pour la persistance des réglages et du score du mode défi
 - **API CoinGecko** (`/simple/price` et `/coins/{id}/market_chart/range`) pour les données de prix en direct
 
@@ -46,7 +49,7 @@ Aucune dépendance backend : c'est une application 100 % front-end, déployable 
 
 ```bash
 # 1. Cloner le repository
-git clone https://github.com/TON-USERNAME/dca-time-machine.git
+git clone https://github.com/Dev-Djelloul/dca-time-machine.git
 cd dca-time-machine
 
 # 2. Installer les dépendances
@@ -76,7 +79,7 @@ npm run preview   # prévisualise le build en local
 5. Clique sur **"Lancer la simulation"** — regarde le graphique se tracer en direct.
 6. À la fin, lis le **reçu** qui résume la simulation avec son verdict, puis :
    - **Copie le texte** pour le partager tel quel,
-   - **Télécharge le reçu** en image PNG,
+   - **Télécharge le reçu** en image PNG (avec watermark),
    - ou **télécharge la version story (9:16)** pour les réseaux sociaux.
 7. Consulte la bannière en haut de page pour savoir si c'est ton **jour de versement** aujourd'hui, et le panneau **"et si j'arrêtais maintenant"** pour explorer des scénarios de sortie à partir du prix en direct.
 
@@ -86,12 +89,14 @@ Tous tes réglages (actif, montant, date, options activées) sont sauvegardés a
 
 ## 🚀 Déploiement
 
-### Netlify (recommandé, cohérent avec les autres projets Digital Blue Skye)
+L'app est déployée en continu sur Netlify : **[dca-timemachine.netlify.app](https://dca-timemachine.netlify.app/)** — chaque push sur `main` redéclenche un build et republie le site automatiquement.
+
+### Reproduire le déploiement toi-même (Netlify)
 
 ```bash
 npm run build
 ```
-Puis glisse-dépose le dossier `dist/` sur [app.netlify.com/drop](https://app.netlify.com/drop), ou connecte le repo GitHub directement dans Netlify pour un déploiement continu automatique à chaque push.
+Puis glisse-dépose le dossier `dist/` sur [app.netlify.com/drop](https://app.netlify.com/drop), ou connecte le repo GitHub directement dans Netlify pour un déploiement continu.
 
 **Build settings Netlify :**
 - Build command : `npm run build`
@@ -106,13 +111,18 @@ Le projet étant un simple build Vite statique, il est compatible avec n'importe
 
 ```
 dca-time-machine/
-├── index.html              # Point d'entrée HTML
-├── package.json            # Dépendances et scripts npm
-├── vite.config.js          # Configuration Vite
+├── index.html              # Point d'entrée HTML (favicon inclus)
+├── package.json             # Dépendances et scripts npm
+├── vite.config.js           # Configuration Vite
 ├── src/
-│   ├── main.jsx            # Montage React
-│   └── App.jsx             # Composant principal (toute la logique de l'app)
-├── history/                # Versions précédentes, conservées pour traçabilité
+│   ├── main.jsx              # Montage React
+│   └── App.jsx                # Composant principal (toute la logique de l'app)
+├── assets/
+│   ├── icons/
+│   │   └── dca-time-machine-icon.svg      # Icône seule (favicon, watermark)
+│   └── logo/
+│       └── dca-time-machine-lockup.svg    # Logo complet (header)
+├── history/                 # Versions précédentes, conservées pour traçabilité
 │   ├── v1-dca-vs-lumpsum-roast.jsx
 │   ├── v2-live-data-eth-image-export.jsx
 │   ├── v3-localstorage-compare-mode.jsx
@@ -132,9 +142,10 @@ dca-time-machine/
 | **v3** | Persistance des réglages (localStorage), mode comparaison BTC vs ETH |
 | **v4** | Ajout Solana (comparaison à 3 actifs), mode défi (prédiction + score), export format story 9:16 |
 | **v5** | Bannière de rappel de versement (prix live), scénarios "et si j'arrêtais maintenant" |
+| **v6** | Identité visuelle : logo dédié (favicon + header), watermark discret sur les exports |
 
 ---
 
 ## ⚖️ Licence
 
-Projet personnel — Digital Blue Skye. Libre d'utilisation et de modification à titre éducatif.
+MIT — Digital Blue Skye. Libre d'utilisation, de modification et de redistribution.
