@@ -1,7 +1,8 @@
 # ⏳ DCA Time Machine
 
 > **Simulateur DCA vs Lump Sum crypto, avec verdict sarcastique partageable**
-> Un projet [Digital Blue Skye](https://github.com/) — remonte le temps, investis façon DCA (Dollar-Cost Averaging), et découvre si t'aurais dû tout miser d'un coup à la place.
+> Un projet de [Yellow Blue Skye](https://github.com/Dev-Djelloul/) — remonte le temps, investis façon DCA (Dollar-Cost Averaging), et découvre si t'aurais dû tout miser d'un coup à la place.
+> Cette application a été réalisé avec Claude Code. 
 
 ---
 
